@@ -2,12 +2,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 //object must implement 'Comparable' interface.
 //object must have 'toString()' method implemented in order to be printed.
-
-
 
 public class BinaryTree
 {
@@ -46,6 +42,36 @@ public class BinaryTree
             }
         } 
         return null;
+    }
+
+    private void printInorder(Node nodeParameter)
+    {
+        if(nodeParameter != null)
+        {
+            printInorder(nodeParameter.getLeftChildNode());
+            printElement(nodeParameter);
+            printInorder(nodeParameter.getRightChildNode());
+        }
+    }
+
+    private void printPreorder(Node nodeParameter)
+    {
+        if(nodeParameter != null)
+        {
+            printElement(nodeParameter);
+            printPreorder(nodeParameter.getLeftChildNode());
+            printPreorder(nodeParameter.getRightChildNode());
+        }
+    }
+
+    private void printPostorder(Node nodeParameter)
+    {
+        if(nodeParameter != null)
+        {
+            printPostorder(nodeParameter.getLeftChildNode());
+            printPostorder(nodeParameter.getRightChildNode());
+            printElement(nodeParameter);
+        }
     }
 
     public BinaryTree()
@@ -366,20 +392,19 @@ public class BinaryTree
 
     public void printInorder()
     {
-        
+        printInorder(rootNode);
     }
 
     public void printPreorder()
     {
-        
+        printPreorder(rootNode);
     }
 
     public void printPostorder()
     {
-        
+        printPostorder(rootNode);
     }
 }
-
 
 class Node
 {
