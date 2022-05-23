@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 //object must implement 'Comparable' interface.
 //object must have 'toString()' method implemented in order to be printed.
 
@@ -11,6 +12,41 @@ import java.util.List;
 public class BinaryTree
 {
     private Node rootNode;
+
+    private void printElement(Node nodeParameter)
+    {
+        if(nodeParameter.getCounter() > 1)
+        {
+            System.out.print("|" + nodeParameter.getObject() + "(" +  + nodeParameter.getCounter() + ")|");
+        }
+        else
+        {
+            System.out.print("|" + nodeParameter.getObject() + "|"); 
+        }
+    }
+
+    private Node getNodeByObject(Object objectParameter)
+    {
+        @SuppressWarnings("unchecked")
+        Comparable<Object> comparableObject = (Comparable<Object>)objectParameter;
+        Node node = rootNode;
+        while(node != null)
+        {
+            if(comparableObject.compareTo(node.getObject()) < 0)
+            {
+                node = node.getLeftChildNode();
+            }
+            else if(comparableObject.compareTo(node.getObject()) > 0)
+            {
+                node = node.getRightChildNode();
+            }
+            else
+            {
+                return node;
+            }
+        } 
+        return null;
+    }
 
     public BinaryTree()
     {
@@ -59,7 +95,7 @@ public class BinaryTree
                 }
                 else
                 {
-                    node.addCounter();
+                    node.incrementCounter();
                     done = true;
                     break;
                 }
@@ -109,18 +145,6 @@ public class BinaryTree
         }
     }
 
-    private void printElement(Node nodeParameter)
-    {
-        if(nodeParameter.getCounter() > 1)
-        {
-            System.out.print("|" + nodeParameter.getObject() + "(" +  + nodeParameter.getCounter() + ")|");
-        }
-        else
-        {
-            System.out.print("|" + nodeParameter.getObject() + "|"); 
-        }
-    }
-
     public Object getMinObject()
     {
         if(rootNode != null)
@@ -153,29 +177,6 @@ public class BinaryTree
         {
             return null;
         }
-    }
-
-    private Node getNodeByObject(Object objectParameter)
-    {
-        @SuppressWarnings("unchecked")
-        Comparable<Object> comparableObject = (Comparable<Object>)objectParameter;
-        Node node = rootNode;
-        while(node != null)
-        {
-            if(comparableObject.compareTo(node.getObject()) < 0)
-            {
-                node = node.getLeftChildNode();
-            }
-            else if(comparableObject.compareTo(node.getObject()) > 0)
-            {
-                node = node.getRightChildNode();
-            }
-            else
-            {
-                return node;
-            }
-        } 
-        return null;
     }
 
     public Object getPreviousObject(Object objectParameter)
@@ -271,6 +272,112 @@ public class BinaryTree
             }
         }
     }
+
+    public void removeObject(Object objectParameter)
+    {
+        Node node = getNodeByObject(objectParameter);
+        if(node != null)
+        {
+            if(node.getCounter() > 1)
+            {
+                node.decrementCounter();
+            }
+            else
+            {
+                if((node.getLeftChildNode() == null) && (node.getRightChildNode() == null))
+                {
+                    if(node == rootNode)
+                    {
+                        rootNode = null;
+                    }
+                    else if(node.getParentNode().getLeftChildNode() == node)
+                    {
+                        node.getParentNode().setLeftChildNode(null);
+                    }
+                    else
+                    {
+                        node.getParentNode().setRightChildNode(null);
+                    }
+                }
+                else if((node.getLeftChildNode() != null) && (node.getRightChildNode() != null))
+                {  
+                    Node nextNode = getNodeByObject(getNextObject(node.getObject()));
+                    if(nextNode != null)
+                    {
+                        removeObject(nextNode.getObject());
+
+                        if(node == rootNode)
+                        {
+                            rootNode = nextNode;
+                            nextNode.setLeftChildNode(node.getLeftChildNode());
+                            nextNode.setRightChildNode(node.getRightChildNode());
+                        }
+                        else
+                        {
+                            if(node.getParentNode().getLeftChildNode() == node)
+                            {
+                                node.getParentNode().setLeftChildNode(nextNode);
+                                nextNode.setLeftChildNode(node.getLeftChildNode());
+                                nextNode.setRightChildNode(node.getRightChildNode());
+                            }
+                            else
+                            {
+                                node.getParentNode().setRightChildNode(nextNode);
+                                nextNode.setLeftChildNode(node.getLeftChildNode());
+                                nextNode.setRightChildNode(node.getRightChildNode());
+                            }
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                    
+                    //
+                }
+                else
+                {
+                    Node childNode = null;
+                    if(node.getLeftChildNode() != null)
+                    {
+                        childNode = node.getLeftChildNode();
+                    }
+                    else if(node.getRightChildNode() != null)
+                    {
+                        childNode = node.getRightChildNode();
+                    }
+                    
+                    if(node == rootNode)
+                    {
+                        rootNode = childNode;
+                    }
+                    else if(node.getParentNode().getLeftChildNode() == node)
+                    {
+                        node.getParentNode().setLeftChildNode(childNode);
+                    }
+                    else
+                    {
+                        node.getParentNode().setRightChildNode(childNode);
+                    }
+                }
+            }
+        }
+    }
+
+    public void printInorder()
+    {
+        
+    }
+
+    public void printPreorder()
+    {
+        
+    }
+
+    public void printPostorder()
+    {
+        
+    }
 }
 
 
@@ -315,9 +422,14 @@ class Node
         return object;
     }
 
-    public void addCounter()
+    public void incrementCounter()
     {
         counter += 1;
+    }
+
+    public void decrementCounter()
+    {
+        counter -= 1;
     }
 
     public int getCounter()
