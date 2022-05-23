@@ -285,6 +285,8 @@ public class BinaryTree
                             node = node.getParentNode();
                             if(node.getParentNode() == null)
                             {
+                                
+
                                 return null;
                             }
                         }
@@ -328,38 +330,34 @@ public class BinaryTree
                 else if((node.getLeftChildNode() != null) && (node.getRightChildNode() != null))
                 {  
                     Node nextNode = getNodeByObject(getNextObject(node.getObject()));
-                    if(nextNode != null)
+                    removeObject(nextNode.getObject());
+                    if(node == rootNode)
                     {
-                        removeObject(nextNode.getObject());
-
-                        if(node == rootNode)
-                        {
-                            rootNode = nextNode;
-                            nextNode.setLeftChildNode(node.getLeftChildNode());
-                            nextNode.setRightChildNode(node.getRightChildNode());
-                        }
-                        else
-                        {
-                            if(node.getParentNode().getLeftChildNode() == node)
-                            {
-                                node.getParentNode().setLeftChildNode(nextNode);
-                                nextNode.setLeftChildNode(node.getLeftChildNode());
-                                nextNode.setRightChildNode(node.getRightChildNode());
-                            }
-                            else
-                            {
-                                node.getParentNode().setRightChildNode(nextNode);
-                                nextNode.setLeftChildNode(node.getLeftChildNode());
-                                nextNode.setRightChildNode(node.getRightChildNode());
-                            }
-                        }
+                        rootNode = nextNode;
+                        nextNode.setLeftChildNode(node.getLeftChildNode());
+                        nextNode.setRightChildNode(node.getRightChildNode());
+                        nextNode.setParentNode(null);
+                        nextNode.getLeftChildNode().setParentNode(nextNode);
+                        nextNode.getRightChildNode().setParentNode(nextNode);
                     }
                     else
                     {
-
-                    }
-                    
-                    //
+                        if(node.getParentNode().getLeftChildNode() == node)
+                        {
+                            node.getParentNode().setLeftChildNode(nextNode);
+                            nextNode.setLeftChildNode(node.getLeftChildNode());
+                            nextNode.setRightChildNode(node.getRightChildNode());
+                            nextNode.setParentNode(node.getParentNode());
+                            nextNode.getLeftChildNode().setParentNode(nextNode);
+                            nextNode.getRightChildNode().setParentNode(nextNode);
+                        }
+                        else
+                        {
+                            node.getParentNode().setRightChildNode(nextNode);
+                            nextNode.setLeftChildNode(node.getLeftChildNode());
+                            nextNode.setRightChildNode(node.getRightChildNode());
+                        }
+                    }  
                 }
                 else
                 {
@@ -376,14 +374,17 @@ public class BinaryTree
                     if(node == rootNode)
                     {
                         rootNode = childNode;
+                        childNode.setParentNode(null);
                     }
                     else if(node.getParentNode().getLeftChildNode() == node)
                     {
                         node.getParentNode().setLeftChildNode(childNode);
+                        childNode.setParentNode(node.getParentNode());
                     }
                     else
                     {
                         node.getParentNode().setRightChildNode(childNode);
+                        childNode.setParentNode(node.getParentNode());
                     }
                 }
             }
@@ -465,5 +466,10 @@ class Node
     public Node getParentNode()
     {
         return parentNode;
+    }
+
+    public void setParentNode(Node parentNodeParameter)
+    {
+        parentNode = parentNodeParameter;
     }
 }
